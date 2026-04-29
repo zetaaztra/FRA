@@ -14,7 +14,7 @@ from openpyxl import load_workbook
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIG
 # ─────────────────────────────────────────────────────────────────────────────
-XLSX_TEMPLATE = "Jahen and Jos Scientific Solution Private Limited.xlsx"
+XLSX_TEMPLATE = "Tracker-Template.xlsx"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PAGE CONFIG
@@ -251,7 +251,7 @@ COHORTS = {
                 "weight": 0.10,
                 "factors": [
                     ("Founder background",           "How would you describe your background in sales, marketing, or D2C?\n1. No prior experience\n2. Some exposure but not formal\n3. I have run a D2C business or sales function before\n4. Significant experience — I led a team or function\n5. Deep expertise — D2C is my primary background", 0.30, False),
-                    ("Reason for choosing industry",  "Why did you choose this specific industry or product category?\n1. Circumstance — I fell into it\n2. Family or community tradition\n3. I saw a gap but have not validated it\n4. I validated a gap before starting\n5. Deep domain knowledge and validated gap — this is my advantage", 0.30, False),
+                    ("Reason for choosing the industry",  "Why did you choose this specific industry or product category?\n1. Circumstance — I fell into it\n2. Family or community tradition\n3. I saw a gap but have not validated it\n4. I validated a gap before starting\n5. Deep domain knowledge and validated gap — this is my advantage", 0.30, False),
                     ("USP clarity",                  "Can you state in one sentence why a consumer should choose your product?\n1. No — still working this out\n2. Yes but it is generic (better quality, good price)\n3. Yes — a specific functional reason\n4. Yes — specific reason confirmed by at least one customer\n5. Yes — specific, evidenced, already in use in marketing materials", 0.40, False),
                 ],
             },
@@ -458,7 +458,7 @@ def init_session():
     if "active_cohort" not in st.session_state: st.session_state.active_cohort = "C1"
     if "theme" not in st.session_state: st.session_state.theme = "Dark"
     if "info" not in st.session_state: st.session_state.info = {
-        "startup": "", "founder": "", "mentor": "", "week": "Week 1"
+        "startup": "", "founder": "", "week": "Week 1"
     }
 
 def build_xlsx(info, scores, remarks):
@@ -474,8 +474,6 @@ def build_xlsx(info, scores, remarks):
         for row in si.iter_rows(min_row=1, max_row=10, max_col=2):
             if str(row[0].value).strip() == "Founder Name":
                 row[1].value = info["founder"]
-            if str(row[0].value).strip() == "Mentor / Owner":
-                row[1].value = info["mentor"]
 
     # Update Weekly_Input
     if "Weekly_Input" in wb.sheetnames:
@@ -521,7 +519,6 @@ def main():
         st.markdown("### 🏢 Startup Details")
         st.session_state.info["startup"] = st.text_input("Startup Name", value=st.session_state.info["startup"])
         st.session_state.info["founder"] = st.text_input("Founder Name", value=st.session_state.info["founder"])
-        st.session_state.info["mentor"]  = st.text_input("Mentor / Owner", value=st.session_state.info["mentor"])
         st.session_state.info["week"]    = st.selectbox("Current Week", ["Week 1", "Week 2", "Week 3", "Week 4"], index=0)
         
         st.divider()
@@ -569,6 +566,7 @@ def main():
     """, unsafe_allow_html=True)
 
     # ── Factor Form ──
+    q_idx = 1
     for d_name, d_info in c_data["domains"].items():
         st.markdown(f"#### 📁 {d_name}")
         for f in d_info["factors"]:
@@ -577,10 +575,11 @@ def main():
             
             st.markdown(f"""
             <div class="factor-card">
-                <div class="factor-title">{f_name} {'<span style="background:#b71c1c;color:#fff;font-size:0.68rem;font-weight:700;padding:1px 6px;border-radius:4px;">HD</span>' if is_hd else ''}</div>
+                <div class="factor-title">Qno.{q_idx}: {f_name} {'<span style="background:#b71c1c;color:#fff;font-size:0.68rem;font-weight:700;padding:1px 6px;border-radius:4px;">HD</span>' if is_hd else ''}</div>
                 <div class="factor-question">{q_text.replace('\n','<br>')}</div>
             </div>
             """, unsafe_allow_html=True)
+            q_idx += 1
             
             cur_s = st.session_state.scores.get(key)
             sc_cols = st.columns(5)
