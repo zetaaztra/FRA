@@ -64,6 +64,11 @@ def get_css(theme="Dark"):
         color: {text};
         font-weight: 500;
     }}
+    
+    /* Ensure Streamlit icons don't break into text ligatures */
+    span[class*="material"] {{
+        font-family: 'Material Symbols Rounded', 'Material Icons' !important;
+    }}
 
     .stApp {{ background: {bg}; }}
     .main .block-container {{ padding-top: 2rem; max-width: 1120px; }}
